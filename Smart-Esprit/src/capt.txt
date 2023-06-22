@@ -1,0 +1,4 @@
+22 temperature 1 1 3 2 2 2 2
+ 165 temperature 1 1 3 3 25 2 25
+ 123 temperature 1 1 5 2 25 2 25
+ 11 debit 1 1 3 2 31 5 0

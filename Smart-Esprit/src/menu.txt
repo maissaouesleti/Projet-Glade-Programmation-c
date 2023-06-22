@@ -1,0 +1,3 @@
+75 sale 1 1 1990 1DT petit-dejeuner Repas-midi Diner
+755 sale 1 1 1990 5DT petit-dejeuner Repas-midi Diner
+66 sale 1 1 1990 2DT petit-dejeuner non non

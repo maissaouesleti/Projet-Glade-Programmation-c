@@ -1,0 +1,687 @@
+/*#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
+#include <gtk/gtk.h>
+#include "interface.h"
+#include "support.h"*/
+
+//#include "callbacks.h"
+#include "mahdi_fonction.h"
+
+int supp=0;
+int embalem = 0;
+int embalee= 0 ;
+char wantedtodel[20];
+int stock = 1;
+int repture = 0;
+int flage = 0 ;
+int info = 0 ;
+int flagedit = 0;
+char wantedid[20] = "none";
+int flagemail = 0;
+
+
+gboolean
+on_MGWindowStock_focus_in_event        (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data)
+{
+	if (flage == 0 ){
+GtkWidget *tree;
+
+tree =  lookup_widget(widget,"MGTreeView");
+
+
+mgafficherstock(tree,"");
+
+}
+flage = -1;
+
+  return FALSE;
+}
+
+
+void
+on_MGButtonAdd_clicked                 (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+GtkWidget *ajout;
+
+ajout = create_MGWindowAjout();
+gtk_widget_show(ajout);
+flage = 0;
+}
+
+void
+on_MGButtonAjout_clicked               (GtkWidget       *objet_graphique,
+                                        gpointer         user_data)
+{
+GtkWidget *type,*id,*name,*quantity,*unity,*alert,*emable,*jour,*mois,*annee;
+
+produit p;
+char fich[20] = "stock.txt";
+int flag = 0;
+
+
+type = lookup_widget(GTK_WIDGET(objet_graphique),"MGComboBoxP");
+id = lookup_widget(GTK_WIDGET(objet_graphique),"MGEntryId");
+name = lookup_widget(GTK_WIDGET(objet_graphique),"MGEntryName");
+quantity = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinButtonQuantity");
+unity = lookup_widget(GTK_WIDGET(objet_graphique),"MGEntryUnity");
+alert = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinButtonAlert");
+jour = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinjx");
+mois = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinmx");
+annee = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinax");
+//embale = lookup_widget(GTK_WIDGET(objet_graphique),"MGEntryEmbale");
+
+strcpy(p.type,gtk_combo_box_get_active_text(GTK_COMBO_BOX(type)));
+strcpy(p.id,gtk_entry_get_text(GTK_ENTRY(id)));
+strcpy(p.name,gtk_entry_get_text(GTK_ENTRY(name)));
+p.quantity = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(quantity));
+strcpy(p.unity,gtk_entry_get_text(GTK_ENTRY(unity)));
+p.alert = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(alert));
+p.date.jour = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(jour));
+p.date.mois = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(mois));
+p.date.annee = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(annee));
+strcpy(p.embale,"non");
+if (embalee){
+	strcpy(p.embale,"oui");
+}
+
+//if ((strcmp(p.type,"") || strcmp(p.name,"") || strcmp(p.unity,""))){
+if (mgcheckid(fich , p.id)){
+info = 1; // probleme id existe;
+
+}else{
+info = 0;
+if (mgajouterstock(fich,p) == 2){
+info = 2;
+}
+}
+GtkWidget *information;
+
+information = create_MGWindowError();
+gtk_widget_show(information);
+//}
+
+
+GtkWidget *tree;
+
+tree =  lookup_widget(objet_graphique,"MGTreeView");
+
+
+mgafficherstock(tree,"");
+
+}
+
+void
+on_MGButtonModify_clicked              (GtkButton       *button,
+                                        gpointer         user_data)
+{
+if (strcmp(wantedid,"none")==0){
+
+GtkWidget *information;
+
+information = create_MGWindowError();
+gtk_widget_show(information);
+info = 5;
+}else{
+GtkWidget *edit;
+
+
+edit = create_MGWindowEdit();
+gtk_widget_show(edit);}
+flage = 0;
+
+
+}
+
+
+void
+on_MGButtonEditm_clicked               (GtkButton       *objet_graphique,
+                                        gpointer         user_data)
+{
+GtkWidget *type,*id,*name,*quantity,*unity,*alert,*emable,*jour,*mois,*annee;
+
+produit p;
+char fich[20] = "stock.txt";
+int flag = 0;
+
+
+id = lookup_widget(GTK_WIDGET(objet_graphique),"MGEntryIdm");
+type = lookup_widget(GTK_WIDGET(objet_graphique),"MGComboBoxPm");
+name = lookup_widget(GTK_WIDGET(objet_graphique),"MGEntryNamem");
+quantity = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinButtonQuantitym");
+alert = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinButtonAlertm");
+jour = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinjxm");
+mois = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinmxm");
+annee = lookup_widget(GTK_WIDGET(objet_graphique),"MGSpinaxm");
+
+//embale = lookup_widget(GTK_WIDGET(objet_graphique),"MGEntryEmbale");
+
+strcpy(p.type,gtk_combo_box_get_active_text(GTK_COMBO_BOX(type)));
+strcpy(p.id,gtk_entry_get_text(GTK_ENTRY(id)));
+strcpy(p.name,gtk_entry_get_text(GTK_ENTRY(name)));
+p.quantity = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(quantity));
+p.alert = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(alert));
+p.date.jour = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(jour));
+p.date.mois = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(mois));
+p.date.annee = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(annee));
+strcpy(p.embale,"non");
+if (embalem){
+	strcpy(p.embale,"oui");
+}
+
+//if ((strcmp(p.type,"") || strcmp(p.id,"") || strcmp(p.name,"") || strcmp(p.unity,""))){
+
+flag = mgmodifierstock(fich,p,supp);
+
+if (flag !=-1){
+info = 3;
+}else{
+info = 2;}
+
+GtkWidget *information;
+
+information = create_MGWindowError();
+gtk_widget_show(information);
+//}
+
+
+GtkWidget *tree;
+
+tree =  lookup_widget(objet_graphique,"MGTreeView");
+
+
+mgafficherstock(tree,"");
+
+}
+
+
+
+
+void
+on_MGRadioemablenon_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton))){
+		embalee=0;
+	}
+}
+
+
+void
+on_MGRadioemableoui_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton))){
+		embalee=1;
+	}
+
+}
+
+
+void
+on_MGRadioAjoutm_toggled               (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton))){
+		supp=1;
+	}
+
+
+
+}
+
+
+void
+on_MGRadioSuppm_toggled                (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton))){
+		supp=0;
+	}
+
+
+}
+
+void
+on_MGRadioEmbaleNonm_toggled           (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton))){
+		embalem=0;
+	}
+
+}
+
+
+void
+on_MGRadioEmbaleOuim_toggled           (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton))){
+		embalem=1;
+	}
+
+}
+
+
+
+void
+on_MGButtonDelete_clicked              (GtkButton       *button,
+                                        gpointer         user_data)
+{
+if (strlen(wantedtodel)>0){
+GtkWidget *delcheck;
+
+delcheck = create_MGWindowSupp();
+gtk_widget_show(delcheck);
+}else{
+info = 5;
+GtkWidget *information;
+information = create_MGWindowError();
+gtk_widget_show(information);
+
+
+}
+
+
+}
+
+
+void
+on_MGButtonAfficher_clicked            (GtkWidget       *objet_graphique,
+                                        gpointer         user_data)
+{
+
+GtkWidget *tree;
+char fich[20]= "stock.txt";
+
+tree =  lookup_widget(objet_graphique,"MGTreeView");
+if (stock && repture){
+	mgafficherstock(tree, "");
+}else if (repture && !stock){
+	mgrepturestock(fich , tree);
+}else if (stock && !repture){
+	mgstockenstock(fich, tree);
+}else{
+	mgafficherstock(tree,"aucun_resultat");
+}
+
+}
+
+
+gboolean
+on_MGWindowEdit_focus_in_event         (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data)
+{
+if (flage==0){
+GtkWidget *type,*id,*name,*quantity,*unity,*alert,*emable,*jour,*mois,*annee, *togglebuttonnon, *togglebuttonoui;
+produit p;
+
+
+char cont[20];
+
+id = lookup_widget(GTK_WIDGET(widget),"MGEntryIdm");
+type = lookup_widget(GTK_WIDGET(widget),"MGComboBoxPm");
+name = lookup_widget(GTK_WIDGET(widget),"MGEntryNamem");
+quantity = lookup_widget(GTK_WIDGET(widget),"MGSpinButtonQuantitym");
+alert = lookup_widget(GTK_WIDGET(widget),"MGSpinButtonAlertm");
+jour = lookup_widget(GTK_WIDGET(widget),"MGSpinjxm");
+mois = lookup_widget(GTK_WIDGET(widget),"MGSpinmxm");
+annee = lookup_widget(GTK_WIDGET(widget),"MGSpinaxm");
+togglebuttonnon = lookup_widget(GTK_WIDGET(widget),"MGRadioEmbaleNonm");
+togglebuttonoui = lookup_widget(GTK_WIDGET(widget),"MGRadioEmbaleOuim");
+
+
+
+
+if (strcmp(wantedid,"none")!=0){
+p = mgrempliredit("stock.txt", wantedid);
+
+int index=5;
+if (strcmp(p.type,"Legumes") == 0){
+index = 0;
+}
+else{
+if (strcmp(p.type,"Fruits") == 0){
+
+index = 1;
+}
+else{
+if (strcmp(p.type,"Laitiers") == 0){
+
+index = 2;
+}
+else{
+if (strcmp(p.type,"Viandes") == 0){
+
+index = 3;
+}
+else{
+if (strcmp(p.type,"Pates") == 0){
+
+index = 4;
+}
+else{
+if (strcmp(p.type,"Epices") == 0){
+
+index = 5;
+}
+else{
+if (strcmp(p.type,"Huiles") == 0){
+index = 6;
+}}}}}}}
+if (strcmp(p.embale,"non")==0){
+gtk_toggle_button_set_active(GTK_RADIO_BUTTON(togglebuttonnon),TRUE);
+}else
+{
+gtk_toggle_button_set_active(GTK_RADIO_BUTTON(togglebuttonoui),TRUE);
+}
+
+gtk_combo_box_set_active (GTK_COMBO_BOX(type), index);
+gtk_entry_set_text(GTK_ENTRY(id),p.id);
+gtk_entry_set_text(GTK_ENTRY(name),p.name);
+gtk_spin_button_set_value(quantity,0);
+gtk_spin_button_set_value(alert,p.alert);
+gtk_spin_button_set_value(jour,p.date.jour);
+gtk_spin_button_set_value(mois,p.date.mois);
+gtk_spin_button_set_value(annee,p.date.annee);
+flagedit = 1;
+flage = -1;
+strcpy(wantedid,"none");
+strcpy(wantedtodel,"");
+}
+}
+  return FALSE;
+}
+
+
+void
+on_MGWindowEdit_destroy                (GtkObject       *object,
+                                        gpointer         user_data)
+{
+flage = 0;
+flagedit = 0;
+supp = 1;
+strcpy(wantedid,"none");
+strcpy(wantedtodel,"");
+}
+
+void
+on_MGTreeView_row_activated            (GtkTreeView     *treeview,
+                                        GtkTreePath     *path,
+                                        GtkTreeViewColumn *column,
+                                        gpointer         user_data)
+{
+GtkTreeIter  iter;
+gchar *type;
+gchar *id;
+gchar *nom;
+gchar *unite;
+
+GtkTreeModel *model = gtk_tree_view_get_model(treeview);
+
+if (gtk_tree_model_get_iter(model,&iter,path)){
+gtk_tree_model_get(GTK_LIST_STORE(model),&iter,1 , &id ,-1);
+strcpy(wantedid,id);
+strcpy(wantedtodel,id);
+}
+}
+
+
+gboolean
+on_MGTreeView_focus_in_event           (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data)
+{
+/*
+GtkWidget *tree;
+
+tree =  lookup_widget(widget,"MGTreeView");
+
+//mgvider(tree);
+mgafficherstock(tree,"");*/
+  return FALSE;
+}
+
+
+void
+on_MGButtonSearch_clicked              (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+GtkWidget *windowstock;
+windowstock = create_MGWindowStock();
+gtk_widget_destroy(windowstock);
+
+
+}
+
+
+void
+on_MGEntrySearch_changed               (GtkEditable     *editable,
+                                        gpointer         user_data)
+{
+GtkWidget *id;
+char ide[20]= "aucun_resultat", fich[20]="stock.txt";
+
+GtkWidget *tree;
+tree =  lookup_widget(editable,"MGTreeView");
+
+id = lookup_widget(GTK_WIDGET(editable),"MGEntrySearch");
+mgafficherstock(tree,ide);
+strcpy(ide,gtk_entry_get_text(GTK_ENTRY(id)));
+
+mgafficherstock(tree,ide);
+
+}
+
+
+void
+on_MGCheckBoxStock_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if (gtk_toggle_button_get_active(togglebutton)){
+	stock = 1;
+}else{
+	stock = 0;
+}
+}
+
+
+void
+on_MGCheckBoxRepture_toggled           (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if (gtk_toggle_button_get_active(togglebutton)){
+	repture = 1;
+}else{
+	repture = 0;
+}
+}
+
+/*
+gboolean
+on_MGWindowAjout_destroy_event         (GtkWidget       *widget,
+                                        GdkEvent        *event,
+                                        gpointer         user_data)
+{
+strcpy(wantedid,"none");
+strcpy(wantedtodel,"");
+flage = 0;
+  return FALSE;
+}*/
+void
+on_MGWindowAjout_destroy               (GtkObject       *object,
+                                        gpointer         user_data)
+{
+strcpy(wantedid,"none");
+strcpy(wantedtodel,"");
+flage = 0;
+
+}
+
+
+gboolean
+on_MGWindowAjout_focus_in_event        (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data)
+{
+if (flage == 0){
+GtkWidget *type;
+
+type = lookup_widget(GTK_WIDGET(widget),"MGComboBoxP");
+gtk_combo_box_set_active (GTK_COMBO_BOX(type), 0);
+
+}
+/*
+GtkWidget *windowstock;
+windowstock = create_MGWindowStock();
+gdk_window_destroy(windowstock);*/
+flage = -1;
+  return FALSE;
+}
+
+
+gboolean
+on_MGWindowError_focus_in_event        (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data)
+{
+GtkWidget *text;
+text = lookup_widget(widget,"MGLabelError");
+if (info == 1){
+gtk_label_set_text(text,"Id deja exist, modifier le!");
+	
+}if (info == 0){
+gtk_label_set_text(text,"Produit ajouté!");
+}
+if (info == 3){
+gtk_label_set_text(text,"Modification de produit terminé!");
+
+}if (info == 2){
+gtk_label_set_text(text,"Tout les champs doivent etre remplir!!");
+
+}if (info == 4){
+gtk_label_set_text(text,"Supprission de produit terminé!");
+
+}if (info == 5){
+gtk_label_set_text(text,"Double click sur le produit pour le selectionner!!");
+}
+  return FALSE;
+}
+
+
+gboolean
+on_MGTreeView_select_cursor_parent     (GtkTreeView     *treeview,
+                                        gpointer         user_data)
+{
+
+  return FALSE;
+}
+
+
+void
+on_MGButtonAlt_clicked                 (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+GtkWidget *email;
+
+email = create_WindowMailing();
+gtk_widget_show(email);
+flagemail =0;
+
+}
+
+
+void
+on_MGButtonSendMail_clicked            (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *emailed;
+
+ char email[50];
+emailed = lookup_widget(GTK_WIDGET(button),"MGEntryEmail");
+strcpy(email,gtk_entry_get_text(GTK_ENTRY(emailed)));
+send_email(email);
+
+}
+
+gboolean
+on_WindowMailing_focus_in_event        (GtkWidget       *widget,
+                                        GdkEventFocus   *event,
+                                        gpointer         user_data)
+{
+GtkWidget *emailed;
+
+if (flagemail ==0){
+ char email[30] = "mahdi.ghali@esprit.tn";
+emailed = lookup_widget(GTK_WIDGET(widget),"MGEntryEmail");
+gtk_entry_set_text(GTK_ENTRY(emailed),email);
+flagemail = 1;
+}
+
+  return FALSE;
+}
+
+
+void
+on_MGButtonOuiarticle_clicked          (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+char fich[20] = "stock.txt";
+if (mgsupprimerstock(fich,wantedtodel)){
+info = 4;
+
+}else{
+info = 5;
+}
+
+GtkWidget *information;
+information = create_MGWindowError();
+gtk_widget_show(information);
+
+GtkWidget *tree;
+
+tree =  lookup_widget(button,"MGTreeView");
+
+
+mgafficherstock(tree,"");
+strcpy(wantedid,"none");
+strcpy(wantedtodel,"");
+flage = 0;
+
+GtkWidget *delcheck;
+
+delcheck = lookup_widget(button,"MGWindowSupp");
+gtk_widget_destroy(delcheck);
+}
+
+
+void
+on_MGButtonNonarticle_clicked          (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+GtkWidget *delcheck;
+
+delcheck = lookup_widget(button,"MGWindowSupp");
+gtk_widget_destroy(delcheck);
+
+}
+
+void
+on_MGButtonLogout_clicked              (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+}
+
+
